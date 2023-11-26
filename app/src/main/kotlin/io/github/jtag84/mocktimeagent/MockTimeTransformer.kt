@@ -68,7 +68,6 @@ class MockTimeTransformer(
                                 OffsetTime::class.java.name,
                                 LocalTime::class.java.name,
                                 ZonedDateTime::class.java.name -> "\$_ = \$proceed(\$\$).plusNanos(${nanoSecondsOffset}L);"
-
                                 LocalDate::class.java.name -> "\$_ = \$proceed($$).plusDays(${daysOffset}L);"
                                 MonthDay::class.java.name -> "\$_ = java.time.MonthDay.from(java.time.LocalDate.now(\$\$).plusDays(${daysOffset}L));"
                                 Year::class.java.name -> "\$_ = \$proceed(\$\$).plusYears(${yearsOffset}L);"

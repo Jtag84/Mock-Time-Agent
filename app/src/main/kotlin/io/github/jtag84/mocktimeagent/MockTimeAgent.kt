@@ -41,7 +41,7 @@ object MockTimeAgent {
 
             val transformer = MockTimeTransformer(startDate, packagesToInclude, packagesToExclude)
 
-            val version = MockTimeAgent::class.java.`package`.implementationVersion
+            val version = getAgentVersion()
 
             println(
                 """
@@ -64,4 +64,16 @@ object MockTimeAgent {
 
     private fun getStringListParameter(environmentVariableName: String): List<String> =
         System.getenv(environmentVariableName)?.split(";") ?: emptyList()
+
+    private fun getAgentVersion(): String? {
+        val resources = Thread.currentThread().contextClassLoader.getResources("META-INF/MANIFEST.MF")
+        while (resources.hasMoreElements()) {
+            val url = resources.nextElement()
+            val manifest = java.util.jar.Manifest(url.openStream())
+            if (manifest.mainAttributes.getValue("Implementation-Title") == "Mock Time Agent") {
+                return manifest.mainAttributes.getValue("Implementation-Version")
+            }
+        }
+        return null
+    }
 }
