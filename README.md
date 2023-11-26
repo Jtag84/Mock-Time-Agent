@@ -81,7 +81,7 @@ java -javaagent:app/build/libs/mock-time-agent.jar -jar app/build/libs/mock-time
 
 or alternatively:
 
-```
+```shell
 MOCK_START_TIME="2023-01-03 12:34:56" java -javaagent:app/build/libs/mock-time-agent.jar -jar app/build/libs/mock-time-agent.jar
 ```
 

@@ -19,6 +19,7 @@ import java.util.*
 plugins {
     kotlin("jvm") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.palantir.git-version") version "3.0.0"
     application
 }
 
@@ -33,6 +34,9 @@ dependencies {
 
     implementation("org.javassist:javassist:3.29.2-GA")
 }
+
+val gitVersion: groovy.lang.Closure<String> by extra
+version = gitVersion()
 
 java {
     toolchain {
@@ -60,7 +64,7 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
             "Can-Retransform-Classes" to "true",
             "Can-Set-Native-Method-Prefix" to "true",
             "Implementation-Title" to "Mock Time Agent",
-            "Implementation-Version" to project.version,
+            "Implementation-Version" to project.version.toString(),
             "Built-Date" to Date(),
             "Built-JDK" to System.getProperty("java.version"),
             "Created-By" to "Gradle ${gradle.gradleVersion}",
