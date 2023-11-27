@@ -1,5 +1,5 @@
 
-![](/Users/clement/Development/Mock-Time-Agent/logo-banner.png)
+![](logo-banner.png)
 
 # Mock-Time-Agent
 
