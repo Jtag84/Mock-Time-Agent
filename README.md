@@ -1,4 +1,21 @@
+
+![](/Users/clement/Development/Mock-Time-Agent/logo-banner.png)
+
 # Mock-Time-Agent
+
+<!-- TOC -->
+* [Mock-Time-Agent](#mock-time-agent)
+  * [Introduction](#introduction)
+  * [Why Mock-Time-Agent?](#why-mock-time-agent)
+  * [Features](#features)
+  * [Use Cases](#use-cases)
+  * [How It Works](#how-it-works)
+  * [Building the Agent](#building-the-agent)
+  * [Usage Instructions](#usage-instructions)
+  * [Testing](#testing)
+    * [Quick Test with Agent's Own Main Class](#quick-test-with-agents-own-main-class)
+    * [Testing with a Spring Boot Application](#testing-with-a-spring-boot-application)
+<!-- TOC -->
 
 ## Introduction
 
@@ -118,7 +135,7 @@ test YearMonth.now(): 2023-01
 test ZonedDateTime.now(): 2023-01-03T12:34:56.087100-05:00[America/New_York]
 ```
 
-## Testing with a Spring Boot Application
+### Testing with a Spring Boot Application
 
 Modify time for a Spring Boot project, including scheduled tasks, without affecting AWS services:
 
