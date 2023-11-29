@@ -40,17 +40,15 @@ class MockTimeTransformer(
     private val now = LocalDateTime.now()
     private val nanoSecondsOffset = ChronoUnit.NANOS.between(now, startDate)
     private val milliSecondsOffset = ChronoUnit.MILLIS.between(now, startDate)
-    private val daysOffset = ChronoUnit.DAYS.between(now.toLocalDate(), startDate.toLocalDate())
-    private val monthsOffset = ChronoUnit.MONTHS.between(YearMonth.from(now), YearMonth.from(startDate))
-    private val yearsOffset = ChronoUnit.YEARS.between(Year.from(now), Year.from(startDate))
 
     init {
         nowEditor = object : ExprEditor() {
             override fun edit(newExpr: NewExpr) {
                 if (newExpr.className == Date::class.java.name) {
-                    newExpr.replace("\$_ = java.util.Date.from(java.time.LocalDateTime.now().plusNanos(${nanoSecondsOffset}L).atZone(java.time.ZoneId.systemDefault()).toInstant());")
+                    newExpr.replace("\$_ = java.util.Date.from(java.time.Instant.now().plusNanos(${nanoSecondsOffset}L));")
                 }
             }
+
 
             override fun edit(m: MethodCall) {
                 when {
@@ -58,8 +56,8 @@ class MockTimeTransformer(
                         val s = "\$_ = (\$proceed(\$\$) + ${milliSecondsOffset}L);"
                         m.replace(s)
                     }
-
                     m.methodName == "now" -> {
+                        val alteredLocalDateTime = "java.time.LocalDateTime.now(\$\$).plusNanos(${nanoSecondsOffset}L)"
                         val replacement =
                             when (m.className) {
                                 Instant::class.java.name,
@@ -68,10 +66,10 @@ class MockTimeTransformer(
                                 OffsetTime::class.java.name,
                                 LocalTime::class.java.name,
                                 ZonedDateTime::class.java.name -> "\$_ = \$proceed(\$\$).plusNanos(${nanoSecondsOffset}L);"
-                                LocalDate::class.java.name -> "\$_ = \$proceed($$).plusDays(${daysOffset}L);"
-                                MonthDay::class.java.name -> "\$_ = java.time.MonthDay.from(java.time.LocalDate.now(\$\$).plusDays(${daysOffset}L));"
-                                Year::class.java.name -> "\$_ = \$proceed(\$\$).plusYears(${yearsOffset}L);"
-                                YearMonth::class.java.name -> "\$_ = \$proceed(\$\$).plusMonths(${monthsOffset}L);"
+                                LocalDate::class.java.name -> "\$_ = java.time.LocalDate.from($alteredLocalDateTime);"
+                                MonthDay::class.java.name -> "\$_ = java.time.MonthDay.from($alteredLocalDateTime);"
+                                Year::class.java.name -> "\$_ = java.time.Year.from($alteredLocalDateTime);"
+                                YearMonth::class.java.name -> "\$_ = java.time.YearMonth.from($alteredLocalDateTime);"
                                 else -> return
                             }
                         m.replace(replacement)

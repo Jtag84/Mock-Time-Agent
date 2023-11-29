@@ -19,14 +19,19 @@ package io.github.jtag84.mocktimeagent
 import java.time.*
 import java.util.*
 
+private const val TWO_SECONDS_IN_MS = 2_000L
+
 fun main() {
     printUsage()
-    val now = LocalDate.now()
+
+    println("Waiting 2 seconds ...")
+    Thread.sleep(TWO_SECONDS_IN_MS)
+
     println(
         """
         |test new Date(): ${Date()}
         |test Instant.now(): ${Instant.now()}
-        |test LocalDate.now(): $now
+        |test LocalDate.now(): ${LocalDate.now()}
         |test LocalDateTime.now(): ${LocalDateTime.now()}
         |test LocalTime.now(): ${LocalTime.now()}
         |test MonthDay.now(): ${MonthDay.now()}

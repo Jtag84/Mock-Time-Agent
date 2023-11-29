@@ -92,14 +92,14 @@ java -javaagent:<path-to-mock-time-agent.jar> -jar <your-application>.jar
 The agent JAR includes a main class for quick testing:
 
 ```shell
-export MOCK_START_TIME="2023-01-03 12:34:56"
+export MOCK_START_TIME="2025-12-31 23:59:59"
 java -javaagent:app/build/libs/mock-time-agent.jar -jar app/build/libs/mock-time-agent.jar
 ```
 
 or alternatively:
 
 ```shell
-MOCK_START_TIME="2023-01-03 12:34:56" java -javaagent:app/build/libs/mock-time-agent.jar -jar app/build/libs/mock-time-agent.jar
+MOCK_START_TIME="2025-12-31 23:59:59" java -javaagent:app/build/libs/mock-time-agent.jar -jar app/build/libs/mock-time-agent.jar
 ```
 
 Expected output:
@@ -107,10 +107,10 @@ Expected output:
 ```
 ******** Mock-Time-Agent Initialization ********
 
-Start date: 2023-01-03T12:34:56
-version: unspecified
+Start date: 2025-12-31T23:59:59
 packagesToInclude: []
 packagesToExclude: []
+Version: v1.0.4
 
 ****** Mock-Time-Agent Initialization Done *****
 
@@ -121,18 +121,19 @@ Usage:
    export MOCK_TIME_EXCLUDE="com.exclude;com.google"
    java -javaagent:mock-time-agent.jar -jar jarToRun
 
-test new Date(): Tue Jan 03 12:34:56 EST 2023
-test Instant.now(): 2023-01-03T17:34:56.086263Z
-test LocalDate.now(): 2023-01-03
-test LocalDateTime.now(): 2023-01-03T12:34:56.086745
-test LocalTime.now(): 12:34:56.086769
-test MonthDay.now(): --01-03
-test OffsetDateTime.now(): 2023-01-03T12:34:56.086980-05:00
-test OffsetTime.now(): 12:34:56.087051-05:00
-test System.currentTimeMillis(): 1672767296087
-test Year.now(): 2023
-test YearMonth.now(): 2023-01
-test ZonedDateTime.now(): 2023-01-03T12:34:56.087100-05:00[America/New_York]
+Waiting 2 seconds ...
+test new Date(): Thu Jan 01 00:00:01 EST 2026
+test Instant.now(): 2026-01-01T05:00:01.111918Z
+test LocalDate.now(): 2026-01-01
+test LocalDateTime.now(): 2026-01-01T00:00:01.112513
+test LocalTime.now(): 00:00:01.112530
+test MonthDay.now(): --01-01
+test OffsetDateTime.now(): 2026-01-01T00:00:01.112786-05:00
+test OffsetTime.now(): 00:00:01.112863-05:00
+test System.currentTimeMillis(): 1767243601112
+test Year.now(): 2026
+test YearMonth.now(): 2026-01
+test ZonedDateTime.now(): 2026-01-01T00:00:01.113050-05:00[America/New_York]
 ```
 
 ### Testing with a Spring Boot Application
@@ -140,7 +141,7 @@ test ZonedDateTime.now(): 2023-01-03T12:34:56.087100-05:00[America/New_York]
 Modify time for a Spring Boot project, including scheduled tasks, without affecting AWS services:
 
 ```shell
-MOCK_START_TIME="2023-01-03 11:59:00" MOCK_TIME_INCLUDE="io.github.jtag84.mocktimeagent;org.springframework" MOCK_TIME_EXCLUDE="io.github.jtag84.mocktimeagent.MyAwsServiceImpl" java -javaagent:<path-to-mock-time-agent.jar> -jar spring-boot-app-example.jar
+MOCK_START_TIME="2025-12-31 23:59:59" MOCK_TIME_INCLUDE="io.github.jtag84.mocktimeagent;org.springframework" MOCK_TIME_EXCLUDE="io.github.jtag84.mocktimeagent.MyAwsServiceImpl" java -javaagent:<path-to-mock-time-agent.jar> -jar spring-boot-app-example.jar
 ```
 
 This setup excludes MyAwsServiceImpl to avoid AWS service disruptions, while the included classes and packages will
