@@ -110,7 +110,7 @@ Expected output:
 Start date: 2025-12-31T23:59:59-05:00[America/New_York]
 packagesToInclude: []
 packagesToExclude: []
-Version: v2.0.0
+Version: v2.0.1
 
 ****** Mock-Time-Agent Initialization Done *****
 
