@@ -63,7 +63,9 @@ class MockTimeTransformer(
                     }
                     // Capturing calls to now(..) but skipping calls to now(Clock) since we're already modifying
                     // the Clock this would lead to doubling the time adjustment
-                    methodCall.methodName == "now" && methodCall.withNoClockParameter() -> {
+                    methodCall.className.startsWith("java.time.")
+                            && methodCall.methodName == "now"
+                            && methodCall.withNoClockParameter() -> {
                         val alteredLocalDateTime = "java.time.LocalDateTime.now(\$\$).plusNanos(${nanoSecondsOffset}L)"
                         val replacement =
                             when (methodCall.className) {
