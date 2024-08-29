@@ -29,21 +29,35 @@ fun main() {
 
     println(
         """
+        |test Clock.fixed(LocalDate.of(2022, Month.MAY, 4).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault()).instant(): ${Clock.fixed(LocalDate.of(2022, Month.MAY, 4).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault()).instant()}
+        |test Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(14)).instant(): ${Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(14)).instant()}
+        |test Clock.system(ZoneId.systemDefault()).instant(): ${Clock.system(ZoneId.systemDefault()).instant()}
+        |test Clock.systemDefaultZone().instant(): ${Clock.systemDefaultZone().instant()}
+        |test Clock.systemUTC().instant(): ${Clock.systemUTC().instant()}
+        |test Clock.tick(Clock.systemDefaultZone(), Duration.ofSeconds(2)).instant(): ${Clock.tick(Clock.systemDefaultZone(), Duration.ofSeconds(2)).instant()}
+        |test Clock.tickMillis(ZoneId.systemDefault()).instant(): ${Clock.tickMillis(ZoneId.systemDefault()).instant()}
+        |test Clock.tickMinutes(ZoneId.systemDefault()).instant(): ${Clock.tickMinutes(ZoneId.systemDefault()).instant()}
+        |test Clock.tickSeconds(ZoneId.systemDefault()).instant(): ${Clock.tickSeconds(ZoneId.systemDefault()).instant()}
         |test new Date(): ${Date()}
         |test Instant.now(): ${Instant.now()}
         |test LocalDate.now(): ${LocalDate.now()}
         |test LocalDateTime.now(): ${LocalDateTime.now()}
+        |test LocalDateTime.now(Clock.systemDefaultZone()): ${LocalDateTime.now(Clock.systemDefaultZone())}
         |test LocalTime.now(): ${LocalTime.now()}
+        |test LocalTime.now(Clock.systemUTC()): ${LocalTime.now(Clock.systemUTC())}
         |test MonthDay.now(): ${MonthDay.now()}
         |test OffsetDateTime.now(): ${OffsetDateTime.now()}
         |test OffsetTime.now(): ${OffsetTime.now()}
-        |test System.currentTimeMillis(): ${System.currentTimeMillis()}
+        |test System.currentTimeMillis(): ${System.currentTimeMillis().withLocalDateTimeConversion()} 
         |test Year.now(): ${Year.now()}
         |test YearMonth.now(): ${YearMonth.now()}
         |test ZonedDateTime.now(): ${ZonedDateTime.now()}
         """.trimMargin()
     )
 }
+
+private fun Long.withLocalDateTimeConversion() =
+    "$this -> ${LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())}"
 
 fun printUsage() {
     println(

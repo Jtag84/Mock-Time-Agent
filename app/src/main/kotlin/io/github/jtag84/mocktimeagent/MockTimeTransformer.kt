@@ -17,6 +17,7 @@
 package io.github.jtag84.mocktimeagent
 
 import javassist.ClassPool
+import javassist.CtClass
 import javassist.expr.ExprEditor
 import javassist.expr.MethodCall
 import javassist.expr.NewExpr
@@ -29,7 +30,7 @@ import java.util.*
 
 
 class MockTimeTransformer(
-    startDate: LocalDateTime,
+    startDate: ZonedDateTime,
     packagesToInclude: Collection<String>,
     packagesToExclude: Collection<String>
 ) : ClassFileTransformer {
@@ -37,9 +38,14 @@ class MockTimeTransformer(
     private val packagesToExclude = toJavassistPackageNames(packagesToExclude)
     private val nowEditor: ExprEditor
 
-    private val now = LocalDateTime.now()
+    private val now = ZonedDateTime.now()
     private val nanoSecondsOffset = ChronoUnit.NANOS.between(now, startDate)
     private val milliSecondsOffset = ChronoUnit.MILLIS.between(now, startDate)
+
+    private val clockMethodsToIntercept = setOf(
+        "systemUTC", "systemDefaultZone", "system",
+        "tickSeconds", "tickMinutes", "tickMillis",
+    )
 
     init {
         nowEditor = object : ExprEditor() {
@@ -49,17 +55,18 @@ class MockTimeTransformer(
                 }
             }
 
-
-            override fun edit(m: MethodCall) {
+            override fun edit(methodCall: MethodCall) {
                 when {
-                    m.className == System::class.java.name && m.methodName == "currentTimeMillis" -> {
-                        val s = "\$_ = (\$proceed(\$\$) + ${milliSecondsOffset}L);"
-                        m.replace(s)
+                    methodCall.className == System::class.java.name && methodCall.methodName == "currentTimeMillis" -> {
+                        val replacement = "\$_ = (\$proceed(\$\$) + ${milliSecondsOffset}L);"
+                        methodCall.replace(replacement)
                     }
-                    m.methodName == "now" -> {
+                    // Capturing calls to now(..) but skipping calls to now(Clock) since we're already modifying
+                    // the Clock this would lead to doubling the time adjustment
+                    methodCall.methodName == "now" && methodCall.withNoClockParameter() -> {
                         val alteredLocalDateTime = "java.time.LocalDateTime.now(\$\$).plusNanos(${nanoSecondsOffset}L)"
                         val replacement =
-                            when (m.className) {
+                            when (methodCall.className) {
                                 Instant::class.java.name,
                                 LocalDateTime::class.java.name,
                                 OffsetDateTime::class.java.name,
@@ -72,10 +79,19 @@ class MockTimeTransformer(
                                 YearMonth::class.java.name -> "\$_ = java.time.YearMonth.from($alteredLocalDateTime);"
                                 else -> return
                             }
-                        m.replace(replacement)
+                        methodCall.replace(replacement)
+                    }
+                    methodCall.className == Clock::class.java.name && methodCall.methodName in clockMethodsToIntercept -> {
+                        val replacement = "\$_ = java.time.Clock.offset(\$proceed(\$\$), java.time.Duration.ofNanos(${nanoSecondsOffset}L));"
+                        methodCall.replace(replacement)
                     }
                 }
             }
+
+            private fun MethodCall.withNoClockParameter() =
+                this.method.parameterTypes
+                .map(CtClass::getName)
+                .none { parameterName -> parameterName == "java.time.Clock" }
         }
     }
 

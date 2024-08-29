@@ -107,10 +107,10 @@ Expected output:
 ```
 ******** Mock-Time-Agent Initialization ********
 
-Start date: 2025-12-31T23:59:59
+Start date: 2025-12-31T23:59:59-05:00[America/New_York]
 packagesToInclude: []
 packagesToExclude: []
-Version: v1.0.4
+Version: v2.0.0
 
 ****** Mock-Time-Agent Initialization Done *****
 
@@ -122,18 +122,29 @@ Usage:
    java -javaagent:mock-time-agent.jar -jar jarToRun
 
 Waiting 2 seconds ...
+test Clock.fixed(LocalDate.of(2022, Month.MAY, 4).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault()).instant(): 2022-05-04T00:00:00Z
+test Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(14)).instant(): 2026-01-01T19:00:01.085612Z
+test Clock.system(ZoneId.systemDefault()).instant(): 2026-01-01T05:00:01.086108Z
+test Clock.systemDefaultZone().instant(): 2026-01-01T05:00:01.086197Z
+test Clock.systemUTC().instant(): 2026-01-01T05:00:01.086217Z
+test Clock.tick(Clock.systemDefaultZone(), Duration.ofSeconds(2)).instant(): 2026-01-01T05:00:00Z
+test Clock.tickMillis(ZoneId.systemDefault()).instant(): 2026-01-01T05:00:01.086478Z
+test Clock.tickMinutes(ZoneId.systemDefault()).instant(): 2026-01-01T04:59:42.542478Z
+test Clock.tickSeconds(ZoneId.systemDefault()).instant(): 2026-01-01T05:00:00.542478Z
 test new Date(): Thu Jan 01 00:00:01 EST 2026
-test Instant.now(): 2026-01-01T05:00:01.111918Z
+test Instant.now(): 2026-01-01T05:00:01.091737Z
 test LocalDate.now(): 2026-01-01
-test LocalDateTime.now(): 2026-01-01T00:00:01.112513
-test LocalTime.now(): 00:00:01.112530
+test LocalDateTime.now(): 2026-01-01T01:00:01.091820
+test LocalDateTime.now(Clock.systemDefaultZone()): 2026-01-01T00:00:01.091836
+test LocalTime.now(): 01:00:01.091890
+test LocalTime.now(Clock.systemUTC()): 05:00:01.091915
 test MonthDay.now(): --01-01
-test OffsetDateTime.now(): 2026-01-01T00:00:01.112786-05:00
-test OffsetTime.now(): 00:00:01.112863-05:00
-test System.currentTimeMillis(): 1767243601112
+test OffsetDateTime.now(): 2026-01-01T01:00:01.092355-04:00
+test OffsetTime.now(): 01:00:01.092488-04:00
+test System.currentTimeMillis(): 1767243601092 -> 2026-01-01T00:00:01.092 
 test Year.now(): 2026
 test YearMonth.now(): 2026-01
-test ZonedDateTime.now(): 2026-01-01T00:00:01.113050-05:00[America/New_York]
+test ZonedDateTime.now(): 2026-01-01T00:00:01.097073-05:00[America/New_York]
 ```
 
 ### Testing with a Spring Boot Application

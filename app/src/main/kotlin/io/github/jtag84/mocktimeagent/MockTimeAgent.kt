@@ -18,6 +18,7 @@ package io.github.jtag84.mocktimeagent
 
 import java.lang.instrument.Instrumentation
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
@@ -33,7 +34,7 @@ object MockTimeAgent {
 
         try {
             val startDate = System.getenv("MOCK_START_TIME")
-                ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) }
+                ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).atZone(ZoneId.systemDefault()) }
                 ?: throw IllegalArgumentException("MOCK_START_TIME needs to be defined <yyyy-MM-dd HH:mm:ss>")
 
             val packagesToInclude = getStringListParameter("MOCK_TIME_INCLUDE")

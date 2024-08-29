@@ -38,10 +38,8 @@ dependencies {
 val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
+kotlin {
+    jvmToolchain(11)
 }
 
 application {
