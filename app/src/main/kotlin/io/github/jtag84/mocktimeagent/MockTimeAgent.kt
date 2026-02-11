@@ -33,7 +33,7 @@ object MockTimeAgent {
         println("******** Mock-Time-Agent Initialization ********\n")
 
         try {
-            val startDate = System.getenv("MOCK_START_TIME")
+            val startDate = getStringParameter("MOCK_START_TIME")
                 ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).atZone(ZoneId.systemDefault()) }
                 ?: throw IllegalArgumentException("MOCK_START_TIME needs to be defined <yyyy-MM-dd HH:mm:ss>")
 
@@ -63,8 +63,26 @@ object MockTimeAgent {
         println("\n****** Mock-Time-Agent Initialization Done *****\n")
     }
 
-    private fun getStringListParameter(environmentVariableName: String): List<String> =
-        System.getenv(environmentVariableName)?.split(";") ?: emptyList()
+    private fun getStringParameter(parameterName: String): String {
+        val propValue = System.getProperty(parameterName)
+        if (!propValue.isNullOrBlank()) {
+            return propValue
+        }
+
+        val envValue = System.getenv(parameterName)
+        if (!envValue.isNullOrBlank()) {
+            return envValue
+        }
+        return ""; 
+    }
+
+    private fun getStringListParameter(parameterName: String): List<String> {
+        val paramValue = getStringParameter(parameterName)
+        if (!paramValue.isNullOrBlank()) {
+            return paramValue.split(";")
+        }
+        return emptyList()
+    }
 
     private fun getAgentVersion(): String? {
         val resources = Thread.currentThread().contextClassLoader.getResources("META-INF/MANIFEST.MF")
