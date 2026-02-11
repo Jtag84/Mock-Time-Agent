@@ -66,7 +66,7 @@ The agent JAR is generated at: `app/build/libs/mock-time-agent.jar`
 
 ## Usage Instructions
 
-Before starting your application, define the `MOCK_START_TIME` environment variable:
+Before starting your application, define the `MOCK_START_TIME` environment variable (or system property):
 
 ```shell
 export MOCK_START_TIME="YYYY-MM-DD hh:mm:ss"
@@ -79,10 +79,18 @@ and `MOCK_TIME_EXCLUDE`:
 * `MOCK_TIME_EXCLUDE`: Semicolon-separated list of packages to exclude from time change. Takes precedence
   over `MOCK_TIME_INCLUDE`.
 
+These parameters can be set either as environment variables or as Java system properties (for example,
+`-DMOCK_TIME_INCLUDE=...`).
+
 Launch your Java application with the `Mock-Time-Agent` using the `-javaagent` flag:
 
 ```shell
 java -javaagent:<path-to-mock-time-agent.jar> -jar <your-application>.jar
+
+Or with system properties:
+
+```shell
+java -DMOCK_START_TIME="YYYY-MM-DD hh:mm:ss" -DMOCK_TIME_INCLUDE="com.example;org.example" -DMOCK_TIME_EXCLUDE="com.exclude" -javaagent:<path-to-mock-time-agent.jar> -jar <your-application>.jar
 ```
 
 ## Testing
@@ -163,8 +171,3 @@ Remember to replace placeholders like `path-to-mock-time-agent.jar` and your-app
 before running the commands. The inclusion of `ch.qos.logback` affects log timestamps, so if this is not desirable,
 you can omit it. The `org.springframework` package is included to ensure that any scheduled tasks within
 the Spring Boot application respect the simulated time.
-
-
-
-
-
