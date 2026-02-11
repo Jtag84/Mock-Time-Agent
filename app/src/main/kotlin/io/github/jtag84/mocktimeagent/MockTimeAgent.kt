@@ -17,6 +17,9 @@
 package io.github.jtag84.mocktimeagent
 
 import java.lang.instrument.Instrumentation
+import java.time.ZonedDateTime
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -34,8 +37,8 @@ object MockTimeAgent {
 
         try {
             val startDate = System.getenv("MOCK_START_TIME")
-                ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).atZone(ZoneId.systemDefault()) }
-                ?: throw IllegalArgumentException("MOCK_START_TIME needs to be defined <yyyy-MM-dd HH:mm:ss>")
+                ?.let { parseStartTime(it) }
+                ?: throw IllegalArgumentException("MOCK_START_TIME is not defined.")
 
             val packagesToInclude = getStringListParameter("MOCK_TIME_INCLUDE")
             val packagesToExclude = getStringListParameter("MOCK_TIME_EXCLUDE")
@@ -62,6 +65,24 @@ object MockTimeAgent {
 
         println("\n****** Mock-Time-Agent Initialization Done *****\n")
     }
+    
+    private fun parseStartTime(input: String): ZonedDateTime {
+        val trimmed = input.trim()
+        return try {
+            when {
+                trimmed.length == 10 -> {
+                    val date = LocalDate.parse(trimmed, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    date.atTime(LocalTime.now()).atZone(ZoneId.systemDefault())
+                }
+                else -> {
+                    LocalDateTime.parse(trimmed, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                        .atZone(ZoneId.systemDefault())
+                }
+            }
+        } catch (e: Exception) {
+            throw IllegalArgumentException("MOCK_START_TIME needs to be defined as <yyyy-MM-dd HH:mm:ss> or <yyyy-MM-dd>. Found: [$trimmed]", e)
+        }
+    } 
 
     private fun getStringListParameter(environmentVariableName: String): List<String> =
         System.getenv(environmentVariableName)?.split(";") ?: emptyList()

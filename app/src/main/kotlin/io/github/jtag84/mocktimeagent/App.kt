@@ -64,7 +64,7 @@ fun printUsage() {
         """
         |Mock Time Agent 
         |Usage: 
-        |   export MOCK_START_TIME="<YYYY-MM-DD hh:mm:ss>"
+        |   export MOCK_START_TIME="<YYYY-MM-DD hh:mm:ss> or <YYYY-MM-DD>"
         |   export MOCK_TIME_INCLUDE="com.example;io.github.jtag84.mocktimeagent;org.example"
         |   export MOCK_TIME_EXCLUDE="com.exclude;com.google"
         |   java -javaagent:mock-time-agent.jar -jar jarToRun
